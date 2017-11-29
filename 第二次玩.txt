@@ -1,0 +1,4 @@
+helloworld
+nullpointexception
+runtimeexception
+ajax
