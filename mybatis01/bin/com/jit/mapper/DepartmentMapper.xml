@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.jit.mapper.DepartmentMapper">
+						<!-- 这里的resultType相当于指明:和哪个类相互映射 -->
+  <resultMap type="Department" id="reslutmap1">
+	<!-- 以下是普通类型的映射 -->
+  	<id column="id" property="id"/>
+	<result column="name" property="name"/>
+	<!-- 这是personcard中User的映射 -->
+				<!-- 我在思考怎么把多个Staff映射到Department里的Set里 ,用到这里的ofType-->
+	<collection property="set" ofType="Staff"> 
+		<id column="s_id" property="id"/>
+		<result column="s_name" property="name"/>
+	</collection>	
+  </resultMap>
+	
+  <select id="findById" parameterType="Integer" resultMap="reslutmap1">	
+    SELECT d.*,s.id AS s_id,s.name AS s_name FROM department d LEFT JOIN staff s ON d.id=s.department_id where d.id=#{id}
+   <!--  WHERE 
+    p.id=#{id} -->
+  </select>
+  
+</mapper>
+  
