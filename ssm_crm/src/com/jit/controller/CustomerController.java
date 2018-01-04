@@ -17,7 +17,7 @@ import com.jit.model.BaseDict;
 import com.jit.model.Customer;
 import com.jit.model.QueryVo;
 import com.jit.service.BusinessService;
-
+//github真是个好东西哟
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
