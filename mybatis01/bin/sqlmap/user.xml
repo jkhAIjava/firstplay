@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- 为了防止多个映射关系中有相同的方法名,所以要用命名空间 -->
+<mapper namespace="jit.mapper.UserMapper">
+						<!-- 这里的resultType相当于指明:和哪个类相互映射 -->
+  <select id="findById" parameterType="Integer" resultType="user">	
+    select * from user where id = #{id} <!-- 占位符 -->
+  </select>
+  
+  <!-- 
+  	1.${}	非预编译 不防止sql注入		传进的参数是什么就是什么, 比如传入 jkh  则 select * from user where name=jkh
+  	2.#{}	预编译 防止sql注入		传进的参数是什么在基础上加一对"", 比如传入 jkh  则 select * from user where name="jkh"
+   -->
+  
+  <select id="findByUsername" parameterType="String" resultType="com.jit.model.User">	
+   <!--  select * from user where username like '%${value}%' --> <!-- 占位符 -->
+   		 select * from user where username like "%"#{value}"%"
+  </select>
+  
+  <insert id="insertUser" parameterType="com.jit.model.User">
+		<!-- 在insert之后,立马得到mysql自动生成的id -->
+		<selectKey keyProperty="id" order="AFTER" resultType="Integer">
+			select last_insert_id()
+		</selectKey>
+  		<!-- 这里的占位符要和User的属性一一对应 -->
+		insert into user(username,password,address,phone) values(#{username},#{password},#{address},#{phone}) 
+  </insert>
+  
+  <update id="updateUser" parameterType="com.jit.model.User">
+  		update user set 
+  		username=#{username},
+  		password=#{password},
+  		address=#{address},
+  		phone=#{phone}
+  		where id=#{id}
+  </update>
+  
+  <delete id="deleteUser" parameterType="Integer">
+  
+  </delete>
+</mapper>

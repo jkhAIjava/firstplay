@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<!-- 为了防止多个映射关系中有相同的方法名,所以要用命名空间 -->
+<mapper namespace="com.jit.mapper.UserMapper">
+						<!-- 这里的resultType相当于指明:和哪个类相互映射 -->
+  <select id="findById" parameterType="Integer" resultType="user">	
+    select * from user where id = #{id} <!-- 占位符 -->
+  </select>
+  
+  <!-- 
+  	1.${}	非预编译 不防止sql注入		传进的参数是什么就是什么, 比如传入 jkh  则 select * from user where name=jkh
+  	2.#{}	预编译 防止sql注入		传进的参数是什么在基础上加一对"", 比如传入 jkh  则 select * from user where name="jkh"
+   -->
+  
+  									<!-- 返回值是list,但这里不是配置list而是list的泛型 -->
+  <select id="findByUsername" parameterType="String" resultType="User">	
+   <!--  select * from user where username like '%${value}%' --> <!-- 占位符 -->
+   		 select * from user where username like "%"#{value}"%"
+  </select>
+  
+  <insert id="insertUser" parameterType="User">
+		<!-- 在insert之后,立马得到mysql自动生成的id -->
+		<selectKey keyProperty="id" order="AFTER" resultType="Integer">
+			select last_insert_id()
+		</selectKey>
+  		<!-- 这里的占位符要和User的属性一一对应 -->
+		insert into user(username,password,address) values(#{username},#{password},#{address}) 
+  </insert>
+  
+  <update id="updateUser" parameterType="User">
+  		update user set 
+  		username=#{username},
+  		password=#{password},
+  		address=#{address}
+  		where id=#{id}
+  </update>
+  
+  <delete id="deleteUser" parameterType="Integer">
+  		delete from user where id=#{id}
+  </delete>
+  
+  <select id="findByName" parameterType="QueryVo" resultType="User">
+  		select * from user where username like "%"#{user.username}"%"
+  </select>
+  
+  <select id="totalCount" resultType="Integer">
+  		select count(*) from user;
+  </select>
+  
+  <!-- 动态sql_if -->
+ <!--  <select id="findByNamePass" parameterType="User" resultType="User">
+  		select * from user where id=#{id} and username=#{username}
+	  	select * from user where 1=1
+	  	<if test="username!=null and username!=''">
+	  		and username=#{username}
+	  	</if>
+	  	<if test="password!=null and password!=''">
+	  		and password=#{password}
+	  	</if>
+  </select> -->
+  
+  <!-- 动态sql_where 可以改善if的 where 1=1 的麻烦 -->
+  <select id="findByNamePass" parameterType="User" resultType="User">
+  		<!-- select * from user where id=#{id} and username=#{username} -->
+	  	select * from user 
+	  	<where>
+		  	<if test="username!=null and username!=''">
+		  		username=#{username}
+		  	</if>
+		  	<if test="password!=null and password!=''">
+		  		and password=#{password}
+		  	</if>
+	  	</where>
+  </select>
+  
+  <!-- 使用 对象中传入的数组和集合,只需把属性名写在collection -->
+  <!-- <select id="findByIds" parameterType="QueryVo" resultType="User">
+  		select * from user
+  		<where>
+  			id in						
+  			<foreach item="id" collection="idsList" separator="," open="(" close=")">
+  				#{id}
+  			</foreach>
+  		</where> 
+  </select> -->
+  
+  <!-- foreach 传入集合 -->
+<!--   <select id="findByIds" resultType="User">
+  		select * from user
+  		<where>
+  			id in						
+  			<foreach item="id" collection="list" separator="," open="(" close=")">
+  				#{id}
+  			</foreach>
+  		</where> 
+  </select> -->
+  
+  <!-- foreach 传入数组 -->
+  <select id="findByIds" resultType="User">
+  		select * from user
+  		<where>
+  			id in						
+  			<foreach item="id" collection="array" separator="," open="(" close=")">
+  				#{id}
+  			</foreach>
+  		</where> 
+  </select>
+  
+  <select id="findByMap" parameterType="map" resultType="User">
+  		select * from user where username=#{vo.user.username} and password=#{vo.user.password}
+  </select>
+</mapper>
