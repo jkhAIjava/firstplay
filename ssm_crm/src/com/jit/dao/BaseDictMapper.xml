@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.jit.dao.BaseDictMapper">
+	<select id="getBaseDictBySource" parameterType="String" resultType="BaseDict">
+		select * from base_dict where dict_type_code =#{value}	
+	</select>
+	
+	<!-- 查询分页后的List
+	public List<BaseDict> pageRuslut(QueryVo vo);
+	-->
+	<select id="pageResult" parameterType="QueryVo" resultType="BaseDict">
+		select * from customer
+		<where>
+			<if test="custName!=null">
+				cust_name = #{custName}
+			</if>
+			<if test="custSource!=null">
+				and cust_source = #{custSource}
+			</if>
+			<if test="custRole!=null">
+				and cust_industry = #{custRole}
+			</if>
+			<if test="custLevel!=null">
+				and cust_level = #{custLevel}
+			</if>
+		</where>
+		limit #{startindex},#{pagesize}
+	</select>
+	
+	<!-- 查询符合条件的总页数
+	public int getTotalPage(QueryVo vo);  -->
+	<select id="getTotalPage" parameterType="QueryVo" resultType="Integer">
+		select count(*) from
+		<where>
+			<if test="custName!=null">
+				cust_name = #{custName}
+			</if>
+			<if test="custSource!=null">
+				and cust_source = #{custSource}
+			</if>
+			<if test="custRole!=null">
+				and cust_industry = #{custRole}
+			</if>
+			<if test="custLevel!=null">
+				and cust_level = #{custLevel}
+			</if>
+		</where>
+	</select>
+</mapper>
